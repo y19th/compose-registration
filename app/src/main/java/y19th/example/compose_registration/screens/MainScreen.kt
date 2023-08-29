@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -22,28 +23,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import y19th.example.compose_registration.R
+import y19th.example.compose_registration.extension.shortToast
+import y19th.example.compose_registration.room.entity.User
 import y19th.example.compose_registration.ui.theme.ComposeTheme
 import y19th.example.compose_registration.viewmodel.DatabaseViewModel
 
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    MainScreen{}
+
 }
 
 
 @Composable
-fun MainScreen(onButtonClick: () -> Unit) {
+fun MainScreen(navigateForward: () -> Unit) {
 
     val context = LocalContext.current
 
     val databaseViewModel by remember {
-        mutableStateOf(DatabaseViewModel(context = context))
+        mutableStateOf(DatabaseViewModel().also { it.init(context = context)})
     }
 
     var nameValue by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -95,7 +99,7 @@ fun MainScreen(onButtonClick: () -> Unit) {
                     },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                     )
 
                 TextWithSpacer(headerId = R.string.password)
@@ -106,14 +110,32 @@ fun MainScreen(onButtonClick: () -> Unit) {
                         if(it.text.length <= 16)passwordValue = it
                     },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-
+                    modifier = Modifier.fillMaxWidth()
                     )
 
                 Spacer(modifier = Modifier.height(40.dp))
 
                 Button(
-                    onClick = onButtonClick,
+                    onClick = {
+                        if(
+                            nameValue.text.isNotEmpty()
+                            && emailValue.text.isNotEmpty()
+                            && passwordValue.text.isNotEmpty()
+                        ) {
+                            databaseViewModel.insert(
+                                User(
+                                    id = 0,
+                                    name = nameValue.text,
+                                    email = emailValue.text,
+                                    password = passwordValue.text
+                                )
+                            )
+                            context.shortToast("user added")
+                            navigateForward.invoke()
+                        } else {
+                            context.shortToast(context.getString(R.string.error_message))
+                        }
+                    },
                     modifier = Modifier.padding(all = 8.dp)
                 ) {
                     Text(text = stringResource(id = R.string.end_register))

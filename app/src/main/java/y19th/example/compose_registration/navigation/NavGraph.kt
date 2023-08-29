@@ -13,7 +13,7 @@ import y19th.example.compose_registration.screens.ProfileScreen
 fun NavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = Screens.Main.route
+    startDestination: String = Screens.Main.route,
 ) {
     NavHost(
         navController = navController,
@@ -21,7 +21,7 @@ fun NavGraph(
         startDestination = startDestination
     ) {
         composable(route = Screens.Main.route) {
-            MainScreen(onButtonClick = {
+            MainScreen(navigateForward = {
                 navController.navigate(Screens.Profile.route)
             })
         }

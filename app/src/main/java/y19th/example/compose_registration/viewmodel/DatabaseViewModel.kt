@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import y19th.example.compose_registration.room.UserDatabase
 import y19th.example.compose_registration.room.entity.User
 
-class DatabaseViewModel(val context: Context) : ViewModel() {
+class DatabaseViewModel() : ViewModel() {
 
     private val _users = MutableStateFlow(listOf<User>())
     val users: StateFlow<List<User>> = _users.asStateFlow()
@@ -20,8 +20,9 @@ class DatabaseViewModel(val context: Context) : ViewModel() {
     private var _database: UserDatabase? = null
     val database: UserDatabase get() = requireNotNull(_database)
 
-    init {
+    fun init(context: Context) {
         _database = UserDatabase.getDatabase(context = context)
+        getUsers()
     }
 
     fun getUsers() {

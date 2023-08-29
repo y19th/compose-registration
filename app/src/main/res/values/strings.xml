@@ -5,4 +5,5 @@
     <string name="email">Почта</string>
     <string name="password">Пароль</string>
     <string name="end_register">Зарегистрироваться</string>
+    <string name="error_message">Проверь введенные данные</string>
 </resources>
