@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">compose-registration</string>
+    <string name="insert_data">Введите данные для регистрации</string>
+    <string name="name">Имя</string>
+    <string name="email">Почта</string>
+    <string name="password">Пароль</string>
+    <string name="end_register">Зарегистрироваться</string>
+</resources>
