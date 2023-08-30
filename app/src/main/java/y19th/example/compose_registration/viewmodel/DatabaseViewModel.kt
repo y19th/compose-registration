@@ -12,30 +12,45 @@ import kotlinx.coroutines.launch
 import y19th.example.compose_registration.room.UserDatabase
 import y19th.example.compose_registration.room.entity.User
 
-class DatabaseViewModel() : ViewModel() {
+class DatabaseViewModel : ViewModel() {
 
-    private val _users = MutableStateFlow(listOf<User>())
-    val users: StateFlow<List<User>> = _users.asStateFlow()
+    private val _user = MutableStateFlow(User())
+    val user: StateFlow<User> = _user.asStateFlow()
 
     private var _database: UserDatabase? = null
-    val database: UserDatabase get() = requireNotNull(_database)
+    private val database: UserDatabase get() = requireNotNull(_database)
 
     fun init(context: Context) {
         _database = UserDatabase.getDatabase(context = context)
-        getUsers()
+    }
+    fun setUserPassword(newPassword: String, userId: Int) {
+        viewModelScope.launch (Dispatchers.IO){
+            database.userDao().setUserPassword(
+                userPassword = newPassword,
+                userId = userId
+            )
+            _user.update { oldUser ->
+                oldUser.copy(
+                    id = oldUser.id,
+                    name = oldUser.name,
+                    email = oldUser.email,
+                    password = newPassword
+                )
+            }
+        }
     }
 
-    fun getUsers() {
+    fun getUserByName(userName: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = database.userDao().getUsers()
-            _users.update {
+            val result = database.userDao().getUserByName(userName)
+            _user.update {
                 result
             }
         }
     }
 
     fun insert(user: User) {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.IO) {
             database.userDao().insertUser(user)
         }
     }

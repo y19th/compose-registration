@@ -21,12 +21,12 @@ fun NavGraph(
         startDestination = startDestination
     ) {
         composable(route = Screens.Main.route) {
-            MainScreen(navigateForward = {
-                navController.navigate(Screens.Profile.route)
+            MainScreen(navigateForward = { userName ->
+                navController.navigate(Screens.Profile.route + "/$userName")
             })
         }
-        composable(route = Screens.Profile.route) {
-            ProfileScreen()
+        composable(route = Screens.Profile.route + "/{user_name}") {backStack ->
+            ProfileScreen(backStack.arguments?.getString("user_name"))
         }
     }
 }

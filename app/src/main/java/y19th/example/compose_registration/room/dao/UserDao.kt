@@ -12,17 +12,14 @@ interface UserDao {
     @Query("select * from user")
     fun getUsers() : List<User>
 
-    @Query("select user_password from user where " +
-            ":typedPassword == user_password " +
-            "and :userEmail == user_email " +
-            "and :userName == user_name")
-    fun getUserPassword(typedPassword: String, userEmail: String, userName: String): String
-
     @Query("select * from user where :typedName == user_name")
     fun getUserByName(typedName: String) : User
 
     @Query("select * from user where :typedName == user_email")
     fun getUserByEmail(typedName: String) : User
+
+    @Query("update user set user_password = :userPassword where id == :userId")
+    fun setUserPassword(userPassword: String, userId: Int)
 
     @Insert
     fun insertUser(vararg users: User)

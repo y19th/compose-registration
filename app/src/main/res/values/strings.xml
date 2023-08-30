@@ -6,4 +6,8 @@
     <string name="password">Пароль</string>
     <string name="end_register">Зарегистрироваться</string>
     <string name="error_message">Проверь введенные данные</string>
+    <string name="contacts">Контакты</string>
+    <string name="current_password">Текущий пароль</string>
+    <string name="new_password">Новый пароль</string>
+    <string name="change_password">Сменить пароль</string>
 </resources>

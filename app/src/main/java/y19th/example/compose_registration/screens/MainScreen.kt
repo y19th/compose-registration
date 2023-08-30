@@ -7,9 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,12 +36,12 @@ import y19th.example.compose_registration.viewmodel.DatabaseViewModel
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-
+    MainScreen {}
 }
 
 
 @Composable
-fun MainScreen(navigateForward: () -> Unit) {
+fun MainScreen(navigateForward: (String) -> Unit) {
 
     val context = LocalContext.current
 
@@ -71,51 +70,27 @@ fun MainScreen(navigateForward: () -> Unit) {
                     .fillMaxWidth()
                     .padding(all = 40.dp),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.Start
             ) {
                 Text(
                     text = stringResource(id = R.string.insert_data),
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.fillMaxWidth(0.7F)
                 )
-
-                TextWithSpacer(headerId = R.string.name)
-
-                OutlinedTextField(
-                    value = nameValue,
-                    onValueChange = {
-                        if(it.text.length <= 16)nameValue = it
-                    },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-
+                TextFieldWithHeader(headerId = R.string.name, value = nameValue) {
+                    if(it.text.length <= 16)nameValue = it
+                }
+                TextFieldWithHeader(headerId = R.string.email, value = emailValue) {
+                    if(it.text.length <= 16)emailValue = it
+                }
+                TextFieldWithHeader(headerId = R.string.password, value = passwordValue) {
+                    if(it.text.length <= 16)passwordValue = it
+                }
+                Spacer(
+                    modifier = Modifier.height(40.dp)
                 )
-
-                TextWithSpacer(headerId = R.string.email)
-
-                OutlinedTextField(
-                    value = emailValue,
-                    onValueChange = {
-                        if(it.text.length <= 16)emailValue = it
-                    },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-                    )
-
-                TextWithSpacer(headerId = R.string.password)
-
-                OutlinedTextField(
-                    value = passwordValue,
-                    onValueChange = {
-                        if(it.text.length <= 16)passwordValue = it
-                    },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                    )
-
-                Spacer(modifier = Modifier.height(40.dp))
-
-                Button(
+                OutlinedButton(
                     onClick = {
                         if(
                             nameValue.text.isNotEmpty()
@@ -131,18 +106,29 @@ fun MainScreen(navigateForward: () -> Unit) {
                                 )
                             )
                             context.shortToast("user added")
-                            navigateForward.invoke()
+                            navigateForward.invoke(nameValue.text)
                         } else {
                             context.shortToast(context.getString(R.string.error_message))
                         }
                     },
-                    modifier = Modifier.padding(all = 8.dp)
                 ) {
-                    Text(text = stringResource(id = R.string.end_register))
+                    Text(
+                        text = stringResource(id = R.string.end_register),
+                        style = MaterialTheme.typography.labelMedium
+                    )
                 }
             }
         }
     }
+}
+@Composable
+fun TextFieldWithHeader(headerId: Int,value: TextFieldValue,onValueChange: (TextFieldValue) -> Unit) {
+    TextWithSpacer(headerId = headerId)
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true
+    )
 }
 
 @Composable
